@@ -226,11 +226,15 @@ body {
   margin-top: 10px;
   font-size: 14px;
   color: #444;
-  display: none;
+  overflow: hidden;
+  max-height: 0;
+  opacity: 0;
+  transition: max-height 0.3s ease, opacity 0.3s ease;
 }
 
 .product-description.active {
-  display: block;
+  max-height: 300px;
+  opacity: 1;
 }
 
 .toggle-description {
@@ -245,29 +249,6 @@ body {
 
 .toggle-description:hover {
   background-color: #fdd3d9;
-}
-
-[dir="rtl"] .search-section {
-  flex-direction: row-reverse;
-}
-
-[dir="rtl"] .chat-form {
-  flex-direction: row-reverse;
-}
-
-[dir="rtl"] .site-footer a {
-  margin: 0 8px;
-  direction: rtl;
-}
-
-[dir="rtl"] .product-card {
-  direction: rtl;
-  text-align: right;
-}
-
-[dir="rtl"] .generate-btn i {
-  margin-left: 8px;
-  margin-right: 0;
 }
 
 .selected-products {
@@ -286,6 +267,31 @@ body {
   display: flex;
   flex-wrap: wrap;
   gap: 10px;
+}
+
+/* 🔺 개별 삭제 버튼 스타일 */
+.selected-item {
+  background: #ffeef1;
+  padding: 6px 12px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  border: 1px solid #ff003b;
+}
+
+.remove-btn {
+  background: transparent;
+  border: none;
+  color: #ff003b;
+  font-weight: bold;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.remove-btn:hover {
+  color: #e60028;
 }
 
 .generate-btn {
@@ -308,4 +314,37 @@ body {
 
 .generate-btn i {
   margin-right: 8px;
+}
+
+[dir="rtl"] .search-section,
+[dir="rtl"] .chat-form {
+  flex-direction: row-reverse;
+}
+
+[dir="rtl"] .site-footer a {
+  margin: 0 8px;
+  direction: rtl;
+}
+
+[dir="rtl"] .product-card {
+  direction: rtl;
+  text-align: right;
+}
+
+[dir="rtl"] .generate-btn i {
+  margin-left: 8px;
+  margin-right: 0;
+}
+
+/* ✅ 반응형: 작은 화면 대응 */
+@media (max-width: 768px) {
+  .product-card {
+    flex: 0 1 calc(50% - 10px);
+  }
+}
+
+@media (max-width: 480px) {
+  .product-card {
+    flex: 0 1 100%;
+  }
 }
