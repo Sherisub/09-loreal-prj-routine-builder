@@ -1,4 +1,4 @@
-const API_ENDPOINT = "https://llm-chat-app-template.mariposa06017.workers.dev/api/chat";
+const API_ENDPOINT = "https://llm-chat-app-template.mariposa06017.workers.dev";
 
 const categoryFilter = document.getElementById("categoryFilter");
 const productSearch = document.getElementById("productSearch");
