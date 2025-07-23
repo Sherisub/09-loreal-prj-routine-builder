@@ -107,7 +107,30 @@ function renderProductsWithCurrentFilters() {
 categoryFilter.addEventListener("change", renderProductsWithCurrentFilters);
 productSearch.addEventListener("input", renderProductsWithCurrentFilters);
 
-generateRoutineBtn.addEventListener("click", async () => {
+async function sendChatMessage(message) {
+  chatHistory.push({ role: "user", content: message });
+  chatWindow.innerHTML += `<div><strong>You:</strong> ${message}</div>`;
+
+  try {
+    const res = await fetch(API_ENDPOINT, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ messages: chatHistory }),
+    });
+
+    const data = await res.json();
+    console.log("🧪 Full response from GPT:", data); // 콘솔에서 전체 응답 확인
+
+    const reply = data?.message?.content || JSON.stringify(data); // 없으면 전체 JSON 출력
+    chatWindow.innerHTML += `<div><strong>Bot:</strong> ${reply}</div>`;
+    chatHistory.push({ role: "assistant", content: reply });
+  } catch (err) {
+    console.error("❌ Error:", err);
+    chatWindow.innerHTML += `<div><strong>Bot:</strong> ❌ Error: ${err.message}</div>`;
+  }
+}
+
+generateRoutineBtn.addEventListener("click", () => {
   const selected = allProducts.filter((p) =>
     selectedProducts.includes(p.id.toString())
   );
@@ -118,26 +141,7 @@ generateRoutineBtn.addEventListener("click", async () => {
   }
 
   const userPrompt = `Create a skincare routine using these products: ${selected.map((p) => p.name).join(", ")}.`;
-
-  chatWindow.innerHTML += `<div><strong>You:</strong> ${userPrompt}</div>`;
-  chatHistory.push({ role: "user", content: userPrompt });
-
-  try {
-    const res = await fetch(API_ENDPOINT, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ messages: chatHistory }),
-    });
-
-    const data = await res.json();
-    console.log("🧪 Full response from GPT:", data); // 디버깅용 로그
-
-    const reply = data.message?.content || JSON.stringify(data); // 응답 없으면 전체 출력
-    chatWindow.innerHTML += `<div><strong>Bot:</strong> ${reply}</div>`;
-    chatHistory.push({ role: "assistant", content: reply });
-  } catch (err) {
-    chatWindow.innerHTML += `<div><strong>Bot:</strong> ❌ Error: ${err.message}</div>`;
-  }
+  sendChatMessage(userPrompt);
 });
 
 chatForm.addEventListener("submit", async (e) => {
@@ -145,27 +149,8 @@ chatForm.addEventListener("submit", async (e) => {
   const input = document.getElementById("userInput");
   const userMessage = input.value.trim();
   if (!userMessage) return;
-
-  chatWindow.innerHTML += `<div><strong>You:</strong> ${userMessage}</div>`;
   input.value = "";
-  chatHistory.push({ role: "user", content: userMessage });
-
-  try {
-    const res = await fetch(API_ENDPOINT, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ messages: chatHistory }),
-    });
-
-    const data = await res.json();
-    console.log("🧪 Full response from GPT:", data); // 디버깅용 로그
-
-    const reply = data.message?.content || JSON.stringify(data);
-    chatWindow.innerHTML += `<div><strong>Bot:</strong> ${reply}</div>`;
-    chatHistory.push({ role: "assistant", content: reply });
-  } catch (err) {
-    chatWindow.innerHTML += `<div><strong>Bot:</strong> ❌ Error: ${err.message}</div>`;
-  }
+  sendChatMessage(userMessage);
 });
 
 loadProducts();
