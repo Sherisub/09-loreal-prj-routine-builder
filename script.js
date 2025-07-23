@@ -1,3 +1,4 @@
+console.log("✅ JS Loaded");
 const API_ENDPOINT = "https://llm-chat-app-template.mariposa06017.workers.dev/api/chat";
 
 const categoryFilter = document.getElementById("categoryFilter");
