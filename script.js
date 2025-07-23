@@ -21,7 +21,7 @@ let chatHistory = [
 ];
 
 async function loadProducts() {
-  const response = await fetch("/09-loreal-prj-routine-builder/products.json");
+  const response = await fetch("products.json");
   const data = await response.json();
   allProducts = data.products;
   renderProducts(allProducts);
