@@ -1,3 +1,4 @@
+const API_ENDPOINT = "https://llm-chat-app-template.mariposa06017.workers.dev/"; // 
 /* Get references to DOM elements */
 const categoryFilter = document.getElementById("categoryFilter");
 const productSearch = document.getElementById("productSearch");
@@ -87,7 +88,7 @@ productSearch.addEventListener("input", () => {
 
 generateRoutineBtn.addEventListener("click", async () => {
   const selected = allProducts.filter((p) => selectedProducts.includes(p.id));
-  const res = await fetch("https://33bdfae0-llm-chat-app-template.mariposa06017.workers.dev/api/chat", {
+  const res = await fetch(API_ENDPOINT, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
@@ -103,7 +104,7 @@ generateRoutineBtn.addEventListener("click", async () => {
     }),
   });
   const data = await res.json();
-  chatWindow.innerHTML += `<div><strong>Bot:</strong> ${data.choices[0].message.content}</div>`;
+  chatWindow.innerHTML += `<div><strong>Bot:</strong> ${data.message.content}</div>`;
 });
 
 chatForm.addEventListener("submit", async (e) => {
@@ -113,17 +114,15 @@ chatForm.addEventListener("submit", async (e) => {
   chatWindow.innerHTML += `<div><strong>You:</strong> ${userMessage}</div>`;
   input.value = "";
 
-  const res = await fetch("https://33bdfae0-llm-chat-app-template.mariposa06017.workers.dev/api/chat", {
+  const res = await fetch(API_ENDPOINT, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
-      messages: [
-        { role: "user", content: userMessage },
-      ],
+      messages: [{ role: "user", content: userMessage }],
     }),
   });
   const data = await res.json();
-  chatWindow.innerHTML += `<div><strong>Bot:</strong> ${data.choices[0].message.content}</div>`;
+  chatWindow.innerHTML += `<div><strong>Bot:</strong> ${data.message.content}</div>`;
 });
 
 loadProducts().then(() => {
