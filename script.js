@@ -107,7 +107,6 @@ function renderProductsWithCurrentFilters() {
 categoryFilter.addEventListener("change", renderProductsWithCurrentFilters);
 productSearch.addEventListener("input", renderProductsWithCurrentFilters);
 
-// ✅ 루틴 생성 완전 수정본
 generateRoutineBtn.addEventListener("click", async () => {
   const selected = allProducts.filter((p) =>
     selectedProducts.includes(p.id.toString())
