@@ -17,7 +17,7 @@ productsContainer.innerHTML = `
 `;
 
 async function loadProducts() {
-  const response = await fetch("products.json");
+  const response = await fetch("/09-loreal-prj-routine-builder/products.json");
   const data = await response.json();
   allProducts = data.products;
 }
@@ -87,7 +87,7 @@ productSearch.addEventListener("input", () => {
 
 generateRoutineBtn.addEventListener("click", async () => {
   const selected = allProducts.filter((p) => selectedProducts.includes(p.id));
-  const res = await fetch("https://your-cloudflare-worker-endpoint/chat", {
+  const res = await fetch("https://33bdfae0-llm-chat-app-template.mariposa06017.workers.dev/api/chat", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
@@ -103,7 +103,7 @@ generateRoutineBtn.addEventListener("click", async () => {
     }),
   });
   const data = await res.json();
-  chatWindow.innerHTML += `<div>${data.choices[0].message.content}</div>`;
+  chatWindow.innerHTML += `<div><strong>Bot:</strong> ${data.choices[0].message.content}</div>`;
 });
 
 chatForm.addEventListener("submit", async (e) => {
@@ -113,7 +113,7 @@ chatForm.addEventListener("submit", async (e) => {
   chatWindow.innerHTML += `<div><strong>You:</strong> ${userMessage}</div>`;
   input.value = "";
 
-  const res = await fetch("https://your-cloudflare-worker-endpoint/chat", {
+  const res = await fetch("https://33bdfae0-llm-chat-app-template.mariposa06017.workers.dev/api/chat", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
