@@ -108,7 +108,7 @@ categoryFilter.addEventListener("change", renderProductsWithCurrentFilters);
 productSearch.addEventListener("input", renderProductsWithCurrentFilters);
 
 generateRoutineBtn.addEventListener("click", async () => {
-  const selected = allProducts.filter((p) => selectedProducts.includes(p.id));
+  const selected = allProducts.filter((p) => selectedProducts.includes(p.id.toString()));
   const userPrompt = `Create a skincare routine using these products: ${selected.map((p) => p.name).join(", ")}.`;
 
   chatWindow.innerHTML += `<div><strong>You:</strong> ${userPrompt}</div>`;
