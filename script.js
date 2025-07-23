@@ -1,4 +1,4 @@
-const API_ENDPOINT = "https://llm-chat-app-template.mariposa06017.workers.dev";
+const API_ENDPOINT = "https://llm-chat-app-template.mariposa06017.workers.dev/api/chat";
 
 const categoryFilter = document.getElementById("categoryFilter");
 const productSearch = document.getElementById("productSearch");
@@ -12,10 +12,13 @@ let allProducts = [];
 let selectedProducts = JSON.parse(localStorage.getItem("selectedProducts")) || [];
 
 let chatHistory = [
-  { role: "system", content: "You are a helpful and friendly L'Oréal beauty advisor. Always give concise, personalized product advice using the selected items." }
+  {
+    role: "system",
+    content:
+      "You are a helpful and friendly L'Oréal beauty advisor. Always give concise, personalized product advice using the selected items.",
+  },
 ];
 
-// Load product data
 async function loadProducts() {
   const response = await fetch("/09-loreal-prj-routine-builder/products.json");
   const data = await response.json();
@@ -24,10 +27,10 @@ async function loadProducts() {
   updateSelectedProductsDisplay();
 }
 
-// Render product cards
 function renderProducts(products) {
   productsContainer.innerHTML = products
-    .map(product => `
+    .map(
+      (product) => `
       <div class="product-card ${selectedProducts.includes(product.id) ? "selected" : ""}" data-id="${product.id}">
         <img src="${product.image}" alt="${product.name}" />
         <div class="product-info">
@@ -37,35 +40,35 @@ function renderProducts(products) {
           <div class="product-description">${product.description}</div>
         </div>
       </div>
-    `)
+    `
+    )
     .join("");
 }
 
-// Update selected product list UI and localStorage
 function updateSelectedProductsDisplay() {
-  selectedProductsList.innerHTML = selectedProducts.map(id => {
-    const product = allProducts.find(p => p.id === id);
-    return `
-      <div class="selected-item">
-        ${product ? product.name : "Unknown"}
-        <button class="remove-btn" data-id="${id}">✕</button>
-      </div>`;
-  }).join("");
+  selectedProductsList.innerHTML = selectedProducts
+    .map((id) => {
+      const product = allProducts.find((p) => p.id === id);
+      return `
+        <div class="selected-item">
+          ${product ? product.name : "Unknown"}
+          <button class="remove-btn" data-id="${id}">✕</button>
+        </div>`;
+    })
+    .join("");
 
   localStorage.setItem("selectedProducts", JSON.stringify(selectedProducts));
 
-  // Handle item removal
-  document.querySelectorAll(".remove-btn").forEach(btn => {
+  document.querySelectorAll(".remove-btn").forEach((btn) => {
     btn.addEventListener("click", () => {
       const id = btn.dataset.id;
-      selectedProducts = selectedProducts.filter(pid => pid !== id);
+      selectedProducts = selectedProducts.filter((pid) => pid !== id);
       updateSelectedProductsDisplay();
       renderProductsWithCurrentFilters();
     });
   });
 }
 
-// Toggle selection & description
 productsContainer.addEventListener("click", (e) => {
   if (e.target.classList.contains("toggle-description")) {
     const desc = e.target.closest(".product-info").querySelector(".product-description");
@@ -77,7 +80,7 @@ productsContainer.addEventListener("click", (e) => {
   if (card) {
     const productId = card.dataset.id;
     if (selectedProducts.includes(productId)) {
-      selectedProducts = selectedProducts.filter(id => id !== productId);
+      selectedProducts = selectedProducts.filter((id) => id !== productId);
       card.classList.remove("selected");
     } else {
       selectedProducts.push(productId);
@@ -87,14 +90,14 @@ productsContainer.addEventListener("click", (e) => {
   }
 });
 
-// Filter by category + search
 function renderProductsWithCurrentFilters() {
   const selectedCategory = categoryFilter.value;
   const keyword = productSearch.value.toLowerCase();
 
-  const filtered = allProducts.filter(p =>
-    (selectedCategory === "all" || p.category === selectedCategory) &&
-    (p.name.toLowerCase().includes(keyword) || p.brand.toLowerCase().includes(keyword))
+  const filtered = allProducts.filter(
+    (p) =>
+      (selectedCategory === "all" || p.category === selectedCategory) &&
+      (p.name.toLowerCase().includes(keyword) || p.brand.toLowerCase().includes(keyword))
   );
 
   renderProducts(filtered);
@@ -103,10 +106,9 @@ function renderProductsWithCurrentFilters() {
 categoryFilter.addEventListener("change", renderProductsWithCurrentFilters);
 productSearch.addEventListener("input", renderProductsWithCurrentFilters);
 
-// Generate routine using selected products
 generateRoutineBtn.addEventListener("click", async () => {
-  const selected = allProducts.filter(p => selectedProducts.includes(p.id));
-  const userPrompt = `Create a skincare routine using these products: ${selected.map(p => p.name).join(", ")}.`;
+  const selected = allProducts.filter((p) => selectedProducts.includes(p.id));
+  const userPrompt = `Create a skincare routine using these products: ${selected.map((p) => p.name).join(", ")}.`;
 
   chatWindow.innerHTML += `<div><strong>You:</strong> ${userPrompt}</div>`;
   chatHistory.push({ role: "user", content: userPrompt });
@@ -114,7 +116,7 @@ generateRoutineBtn.addEventListener("click", async () => {
   const res = await fetch(API_ENDPOINT, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ messages: chatHistory })
+    body: JSON.stringify({ messages: chatHistory }),
   });
 
   const data = await res.json();
@@ -123,7 +125,6 @@ generateRoutineBtn.addEventListener("click", async () => {
   chatHistory.push({ role: "assistant", content: reply });
 });
 
-// Chat follow-up
 chatForm.addEventListener("submit", async (e) => {
   e.preventDefault();
   const input = document.getElementById("userInput");
@@ -138,7 +139,7 @@ chatForm.addEventListener("submit", async (e) => {
   const res = await fetch(API_ENDPOINT, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ messages: chatHistory })
+    body: JSON.stringify({ messages: chatHistory }),
   });
 
   const data = await res.json();
