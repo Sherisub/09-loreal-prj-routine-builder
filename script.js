@@ -49,7 +49,7 @@ function renderProducts(products) {
 function updateSelectedProductsDisplay() {
   selectedProductsList.innerHTML = selectedProducts
     .map((id) => {
-      const product = allProducts.find((p) => p.id === id);
+      const product = allProducts.find((p) => p.id.toString() === id.toString());
       return `
         <div class="selected-item">
           ${product ? product.name : "Unknown"}
