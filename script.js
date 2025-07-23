@@ -32,7 +32,7 @@ function renderProducts(products) {
   productsContainer.innerHTML = products
     .map(
       (product) => `
-      <div class="product-card ${selectedProducts.includes(product.id) ? "selected" : ""}" data-id="${product.id}">
+      <div class="product-card ${selectedProducts.includes(product.id.toString()) ? "selected" : ""}" data-id="${product.id}">
         <img src="${product.image}" alt="${product.name}" />
         <div class="product-info">
           <h3>${product.name}</h3>
@@ -107,8 +107,17 @@ function renderProductsWithCurrentFilters() {
 categoryFilter.addEventListener("change", renderProductsWithCurrentFilters);
 productSearch.addEventListener("input", renderProductsWithCurrentFilters);
 
+// ✅ 루틴 생성 완전 수정본
 generateRoutineBtn.addEventListener("click", async () => {
-  const selected = allProducts.filter((p) => selectedProducts.includes(p.id.toString()));
+  const selected = allProducts.filter((p) =>
+    selectedProducts.includes(p.id.toString())
+  );
+
+  if (selected.length === 0) {
+    chatWindow.innerHTML += `<div><strong>You:</strong> I didn’t select any products.</div>`;
+    return;
+  }
+
   const userPrompt = `Create a skincare routine using these products: ${selected.map((p) => p.name).join(", ")}.`;
 
   chatWindow.innerHTML += `<div><strong>You:</strong> ${userPrompt}</div>`;
