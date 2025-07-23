@@ -122,16 +122,22 @@ generateRoutineBtn.addEventListener("click", async () => {
   chatWindow.innerHTML += `<div><strong>You:</strong> ${userPrompt}</div>`;
   chatHistory.push({ role: "user", content: userPrompt });
 
-  const res = await fetch(API_ENDPOINT, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ messages: chatHistory }),
-  });
+  try {
+    const res = await fetch(API_ENDPOINT, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ messages: chatHistory }),
+    });
 
-  const data = await res.json();
-  const reply = data.message?.content || "Sorry, no response.";
-  chatWindow.innerHTML += `<div><strong>Bot:</strong> ${reply}</div>`;
-  chatHistory.push({ role: "assistant", content: reply });
+    const data = await res.json();
+    console.log("🧪 Full response from GPT:", data); // 디버깅용 로그
+
+    const reply = data.message?.content || JSON.stringify(data); // 응답 없으면 전체 출력
+    chatWindow.innerHTML += `<div><strong>Bot:</strong> ${reply}</div>`;
+    chatHistory.push({ role: "assistant", content: reply });
+  } catch (err) {
+    chatWindow.innerHTML += `<div><strong>Bot:</strong> ❌ Error: ${err.message}</div>`;
+  }
 });
 
 chatForm.addEventListener("submit", async (e) => {
@@ -142,19 +148,24 @@ chatForm.addEventListener("submit", async (e) => {
 
   chatWindow.innerHTML += `<div><strong>You:</strong> ${userMessage}</div>`;
   input.value = "";
-
   chatHistory.push({ role: "user", content: userMessage });
 
-  const res = await fetch(API_ENDPOINT, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ messages: chatHistory }),
-  });
+  try {
+    const res = await fetch(API_ENDPOINT, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ messages: chatHistory }),
+    });
 
-  const data = await res.json();
-  const reply = data.message?.content || "Sorry, no response.";
-  chatWindow.innerHTML += `<div><strong>Bot:</strong> ${reply}</div>`;
-  chatHistory.push({ role: "assistant", content: reply });
+    const data = await res.json();
+    console.log("🧪 Full response from GPT:", data); // 디버깅용 로그
+
+    const reply = data.message?.content || JSON.stringify(data);
+    chatWindow.innerHTML += `<div><strong>Bot:</strong> ${reply}</div>`;
+    chatHistory.push({ role: "assistant", content: reply });
+  } catch (err) {
+    chatWindow.innerHTML += `<div><strong>Bot:</strong> ❌ Error: ${err.message}</div>`;
+  }
 });
 
 loadProducts();
